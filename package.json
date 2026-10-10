@@ -1,0 +1,42 @@
+{
+  "name": "fwan-backend",
+  "version": "2.0.0",
+  "description": "FWAN smart agricultural marketplace: Express, Node.js and MongoDB backend with an offline demo mode",
+  "main": "server.js",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "offline": "node scripts/offline.js",
+    "seed": "node src/seed/seed.js",
+    "seed:offline": "OFFLINE=true node src/seed/seed.js --reset",
+    "test": "node --test test/e2e.test.js"
+  },
+  "keywords": [
+    "fwan",
+    "agriculture",
+    "marketplace",
+    "express",
+    "mongodb"
+  ],
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.7",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.1",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.11.1"
+  },
+  "optionalDependencies": {
+    "nodemailer": "^10.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

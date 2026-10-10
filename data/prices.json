@@ -1,0 +1,125 @@
+{
+  "source": "Reference table copied from the FWAN front end (productsData.js). Not a live market feed. Edit via PUT /api/prices (admin) or replace this file.",
+  "updatedAt": "2026-10-10",
+  "items": [
+    {
+      "product": "Tomatoes",
+      "unit": "per basket",
+      "min": 15000,
+      "max": 19000,
+      "currency": "NGN"
+    },
+    {
+      "product": "Cabbage",
+      "unit": "per bag",
+      "min": 10000,
+      "max": 15000,
+      "currency": "NGN"
+    },
+    {
+      "product": "Irish Potatoes",
+      "unit": "per bag",
+      "min": 17000,
+      "max": 25000,
+      "currency": "NGN"
+    },
+    {
+      "product": "Yellow pepper",
+      "unit": "per bag",
+      "min": 4000,
+      "max": 7000,
+      "currency": "NGN"
+    },
+    {
+      "product": "Lettuce",
+      "unit": "per carton",
+      "min": 3500,
+      "max": 6500,
+      "currency": "NGN"
+    },
+    {
+      "product": "Onion Bulb",
+      "unit": "per bag",
+      "min": 50000,
+      "max": 75000,
+      "currency": "NGN"
+    },
+    {
+      "product": "Chilli pepper",
+      "unit": "per bag",
+      "min": 4000,
+      "max": 7000,
+      "currency": "NGN"
+    },
+    {
+      "product": "Bell pepper",
+      "unit": "per carton",
+      "min": 3500,
+      "max": 6000,
+      "currency": "NGN"
+    },
+    {
+      "product": "Carrot",
+      "unit": "per carton",
+      "min": 22000,
+      "max": 28000,
+      "currency": "NGN"
+    },
+    {
+      "product": "Pumpkin",
+      "unit": "per basket",
+      "min": 7000,
+      "max": 12000,
+      "currency": "NGN"
+    },
+    {
+      "product": "Spring Onion",
+      "unit": "per bag",
+      "min": 49000,
+      "max": 57000,
+      "currency": "NGN"
+    },
+    {
+      "product": "Chinese cabbage",
+      "unit": "per carton",
+      "min": 6500,
+      "max": 10000,
+      "currency": "NGN"
+    },
+    {
+      "product": "Cauliflower",
+      "unit": "per carton",
+      "min": 16000,
+      "max": 20000,
+      "currency": "NGN"
+    },
+    {
+      "product": "Celery",
+      "unit": "per bundle",
+      "min": 14000,
+      "max": 17000,
+      "currency": "NGN"
+    },
+    {
+      "product": "Strawberry",
+      "unit": "per carton",
+      "min": 6800,
+      "max": 83000,
+      "currency": "NGN"
+    },
+    {
+      "product": "Apple",
+      "unit": "per carton",
+      "min": 15000,
+      "max": 21000,
+      "currency": "NGN"
+    },
+    {
+      "product": "Mulberries",
+      "unit": "per punnet ",
+      "min": 3500,
+      "max": 20000,
+      "currency": "NGN"
+    }
+  ]
+}

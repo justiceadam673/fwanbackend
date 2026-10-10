@@ -1,0 +1,19 @@
+# Optional Render.com blueprint. Secrets are entered in the Render dashboard, never committed.
+services:
+  - type: web
+    name: fwan-backend
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - { key: NODE_ENV, value: production }
+      - { key: TRUST_PROXY, value: "true" }
+      - { key: PAYMENT_MODE, value: paystack }
+      - { key: MONGODB_URI, sync: false }
+      - { key: JWT_SECRET, generateValue: true }
+      - { key: PAYSTACK_SECRET_KEY, sync: false }
+      - { key: CORS_ORIGINS, sync: false }
+      - { key: FRONTEND_URL, sync: false }
+      - { key: PUBLIC_URL, sync: false }
