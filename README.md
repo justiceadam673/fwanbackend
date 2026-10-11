@@ -129,3 +129,10 @@ Only accounts are moved, not Firestore listings, offers or orders.
 
 ## 13. Turning email verification off (simple mode)
 Set `REQUIRE_EMAIL_VERIFICATION=false` (this is the value in `.env.example`). Then: no verification email is sent, new accounts are marked verified, `POST /api/auth/register` also returns a `token` so the app can sign the user in immediately, and accounts imported from Firebase are never blocked for an unverified email (they still claim their password once). Set it to `true` later to bring verification back (sections 10 and 11 then apply). In offline mode verification is always off.
+
+## 14. Copying all Firestore data into MongoDB (listings, offers, reviews, revenue, notifications, everything)
+Read-only on Firebase; safe to re-run (documents already in MongoDB are never overwritten, so it also picks up data created in Firestore while Express was down).
+1. Accounts first: `node scripts/import-firebase-users.js --firebase ./serviceAccount.json`
+2. Preview: `node scripts/import-firestore-data.js --firebase ./serviceAccount.json --dry-run`
+3. Import: `node scripts/import-firestore-data.js --firebase ./serviceAccount.json`
+Firestore document ids are reused as MongoDB ids, so links between listings and offers stay valid. Mapping: `farmers_listings` to listings (quantity "50 kg" becomes number plus unit, price becomes a number); reviews subcollection to reviews; `offers` to offers (Paid and Completed offers also get an order, and Paid ones a tracking record); `revenue` and `notifications` to their collections; stock, Sold Out and offer counters are recomputed. Every other collection (orders, deliveries, tracking, collections ...) is copied verbatim into the `legacy_firestore` collection, so nothing is lost. Rows that cannot be mapped (owner account missing, unreadable quantity, ...) are listed as "skipped" with the reason. Image links are copied as they are (they keep pointing to ImgBB).
