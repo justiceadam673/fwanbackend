@@ -23,7 +23,7 @@ Your current React code talks to Firebase directly (`firebase/auth`, `firebase/f
 | `layouts/*SidebarLayout.jsx`, `*DashBoardLayout.jsx` | `signOut(auth)`, `onAuthStateChanged` | `const { user, signOut } = useAuth();` then `signOut(); navigate("/")` |
 | `AUTH/components/ProtectedRoute.jsx` | login-only check | also check role: `if (allowedRole && role !== allowedRole) return <Navigate to="/" />` and pass `allowedRole="farmer"`/`"buyer"` in `App.jsx` (this closes the "buyer can open farmer URLs" gap). |
 
-Add two small pages if you want email links to work: `/verify-email` (call `api.auth.verifyEmail(token)`) and `/reset-password` (call `api.auth.resetPassword(token, password)`). With `AUTO_VERIFY_EMAIL=true` (default in the examples) neither is needed.
+Email links open pages served by the backend itself (`/api/auth/verify-email`, `/api/auth/reset-password`), so no front-end page is required. After sign-up, show the message "Check your email to verify your account" with a "Resend verification email" button (`api.auth.resendVerification(email)`), and handle the sign-in error `email_not_verified` the same way.
 
 ## 2. Listings, marketplace, offers
 | File | Replace | With |

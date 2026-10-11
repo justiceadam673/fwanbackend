@@ -17,6 +17,7 @@ import revenue from "./routes/revenue.js";
 import dashboard from "./routes/dashboard.js";
 import tracking from "./routes/tracking.js";
 import { health, stream, prices, admin } from "./routes/misc.js";
+import migration from "./routes/migration.js";
 
 export function createApp() {
   const app = express();
@@ -52,6 +53,7 @@ export function createApp() {
   app.use("/api/prices", prices);
   app.use("/api/stream", stream);
   app.use("/api/admin", admin);
+  app.use("/api/migration", migration);
   app.use("/api", notFoundHandler);
 
   // Optional: serve the built React app (copy the Vite "dist" folder into ./public) so one server hosts everything.

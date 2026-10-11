@@ -13,7 +13,7 @@
     "offline": "node scripts/offline.js",
     "seed": "node src/seed/seed.js",
     "seed:offline": "OFFLINE=true node src/seed/seed.js --reset",
-    "test": "node --test test/e2e.test.js"
+    "test": "node --test test/e2e.test.js test/email.test.js test/firebase-verify.test.js test/migration.test.js test/no-verify.test.js"
   },
   "keywords": [
     "fwan",

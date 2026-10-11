@@ -3,7 +3,7 @@ const omit = (o, keys) => Object.fromEntries(Object.entries(o).filter(([k]) => !
 
 export function user(u) {
   if (!u) return null;
-  const o = omit(u, ["_id", "passwordHash", "verifyTokenHash", "verifyTokenExpires", "resetTokenHash", "resetTokenExpires"]);
+  const o = omit(u, ["_id", "passwordHash", "verifyTokenHash", "verifyTokenExpires", "verifySentAt", "resetTokenHash", "resetTokenExpires", "failedLogins", "lockedUntil"]);
   return { id: u._id, uid: u._id, ...o };
 }
 export function listing(l, extra = {}) {

@@ -56,7 +56,7 @@ Railway, Fly.io, Koyeb or any VPS work the same way (`npm start`, set the same v
 Hosting limits to be aware of:
 * Free Render servers sleep when idle (first request is slow) and have an **ephemeral disk**: images uploaded through `/api/uploads` are lost on redeploy. For production attach a persistent disk and set `DATA_DIR` to it, or keep using ImgBB/Cloudinary for images.
 * Run **one instance**: stock locks, live updates (SSE) and the tracking demo run in memory.
-* Without `SMTP_URL`/nodemailer, verification and reset links are only printed in the server log. Use `AUTO_VERIFY_EMAIL=true` for a demo, or a real SMTP service (e.g. Brevo, Resend SMTP, Gmail app password) for production.
+* Email verification and password-reset emails: see section 10. Without a provider key, links are only printed in the server log.
 
 ## 6. API overview  (all under `/api`; send `Authorization: Bearer <token>`)
 Responses: `{ data, meta? }` or `{ error: { code, message, details? } }`.
@@ -102,3 +102,30 @@ Passwords hashed with bcrypt; JWT sessions; login lock-out after 5 failures; rat
 2. Register, sign in, create a listing, make an offer, accept it.
 3. Pay with a Paystack **test** card and confirm the offer becomes Paid and an order appears.
 Also: Firestore data is not migrated automatically (start fresh or re-enter); the tracking demo restarts if the server restarts; email sending requires SMTP.
+
+## 10. Email verification and password reset (like Firebase)
+Registration emails a link; sign-in is refused until it is clicked (`AUTO_VERIFY_EMAIL=false`). The token is random, stored hashed, valid 24 h and single-use; resending is limited to once a minute; password-reset links last 1 h. The links open small pages served by this backend, so they work even if your React app has no verify/reset pages.
+
+**Set up Brevo (free, about 300 emails/day, no domain needed)**
+1. Create an account at https://www.brevo.com and verify your own email address as a *sender* (Senders & IP -> Senders).
+2. SMTP & API -> API keys -> create a key (starts with `xkeysib-`).
+3. On Render (Environment) set: `BREVO_API_KEY`, `MAIL_FROM_EMAIL` (the verified sender), `MAIL_FROM_NAME=FWAN`, `PUBLIC_URL=https://fwanbackend.onrender.com`, `FRONTEND_URL=https://your-frontend`, `AUTO_VERIFY_EMAIL=false`. Redeploy.
+4. Register a new account and check the inbox (and spam). `GET /api/health` is unchanged; server logs show `[warn] email ... failed` with the reason if sending fails.
+Why an API instead of SMTP: free Render servers block outbound SMTP ports, while HTTPS API calls work. If a provider is down, registration still succeeds and the user can press "resend". Resend also works (`RESEND_API_KEY`) but only emails other people after you verify a domain. In offline mode emails are printed in the terminal and users are auto-verified.
+
+## 11. Let Firebase send the verification email (no email provider needed on Express)
+Set on Render: `VERIFICATION_METHOD=firebase`, `FIREBASE_API_KEY=<apiKey from the React Firebase config>`, `AUTO_VERIFY_EMAIL=false`.
+Flow: the app registers the user on Express, creates the same user in Firebase and calls Firebase `sendEmailVerification`; the user clicks Firebase's link; at sign-in the app gets a Firebase ID token and calls `POST /api/auth/verify-with-firebase { idToken }`. The server asks Google (accounts:lookup) to validate the token, requires `emailVerified === true`, requires the email to match an Express account, then marks that account verified. Sign-in on Express works after that. Needs internet (not available in offline mode, which auto-verifies). Firebase's verification emails come from a Firebase address and may land in spam; you can customise the template in the Firebase console (Authentication, Templates).
+
+## 12. Moving existing Firebase accounts into MongoDB
+Passwords cannot be copied (Firebase never reveals them), so accounts are imported without passwords and each user "claims" theirs at first sign-in.
+1. Firebase console -> Project settings -> Service accounts -> Generate new private key (a JSON file). Keep it private, never commit it, delete it afterwards.
+2. In this folder: `npm install firebase-admin`, make sure `.env` has your `MONGODB_URI`.
+3. Test first: `node scripts/import-firebase-users.js --firebase ./serviceAccount.json --dry-run`, then run it without `--dry-run`. It reads Firebase Auth (email, verified status) and the Firestore `users` collection (name, phone, role) and creates the matching MongoDB users. Safe to re-run: it only adds new people and fills blanks. Accounts without a Firestore profile/role are listed as skipped.
+4. Set `VERIFICATION_METHOD=firebase` (or `both`) and `FIREBASE_API_KEY` on Render so claiming works.
+5. First sign-in of an imported user: Express answers `403 password_setup_required`; the app signs in to Firebase with the same password, then calls `POST /api/auth/claim-with-firebase { idToken, password }`. The token must be under 15 minutes old. Afterwards the user signs in normally on Express.
+New accounts: Express registrations are mirrored to Firebase by the front end; accounts created on the Firebase backup path are picked up by re-running the script or by the claim flow. Optional real-time sync: a Firebase Cloud Function (needs the Blaze plan to call out) posting new users to `POST /api/migration/import` with header `x-migration-secret`.
+Only accounts are moved, not Firestore listings, offers or orders.
+
+## 13. Turning email verification off (simple mode)
+Set `REQUIRE_EMAIL_VERIFICATION=false` (this is the value in `.env.example`). Then: no verification email is sent, new accounts are marked verified, `POST /api/auth/register` also returns a `token` so the app can sign the user in immediately, and accounts imported from Firebase are never blocked for an unverified email (they still claim their password once). Set it to `true` later to bring verification back (sections 10 and 11 then apply). In offline mode verification is always off.
